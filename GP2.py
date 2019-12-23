@@ -14,7 +14,7 @@ PROB_MUTATION   = 0.2  # per-node mutation probability
 def move(x, y): return [x, y]
 
 FUNCTIONS = [move]
-TERMINALS = ['UP', 'DOWN'] 
+TERMINALS = ['UP', 'DOWN','RIGHT','LEFT'] 
 
 class GPTree:
     def __init__(self, data = None, left = None, right = None):
@@ -33,10 +33,11 @@ class GPTree:
         if self.left:  self.left.print_tree (prefix + "   ")
         if self.right: self.right.print_tree(prefix + "   ")
 
-    def compute_tree(self): 
+    def compute_tree(self):
         if (self.data in FUNCTIONS): 
             return self.data(self.left.compute_tree(), self.right.compute_tree())
-        else: return self.data
+        else: 
+            return self.data
             
     def random_tree(self, grow, max_depth, depth = 0): # create random tree using either grow or full method
         if depth < MIN_DEPTH or (depth < max_depth and not grow): 
@@ -152,5 +153,6 @@ def main():
           " and has f=" + str(round(best_of_run_f,3)))
     best_of_run.print_tree()
     print(best_of_run.compute_tree())
+    #print(best_of_run.list)
     
 main()
