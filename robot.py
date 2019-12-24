@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 # オブジェクト
 class MyObject():
@@ -14,7 +15,6 @@ class Area(MyObject):
         self.y2 = y + height
         
     def draw(self):# 描画
-        plt.figure(figsize=(5, 5))
         width = 0.9
         x = [self.x1 - width, 
              self.x1 - width, 
@@ -28,12 +28,13 @@ class Area(MyObject):
              self.y1 - width, 
              self.y1 - width]
 
-        plt.plot(x, y, color='#1f77b4')
+        im = plt.plot(x, y, color='#1f77b4')
         margin_width = 5
         plt.ylim(self.x1 - margin_width, 
                  self.x2 + margin_width)
         plt.xlim(self.y1 - margin_width, 
                  self.y2 + margin_width)
+        return im
 # 障害物
 class Obstacle(MyObject):
     def __init__(self, x, y, width, height):# エリア設定
@@ -55,7 +56,8 @@ class Obstacle(MyObject):
              self.y1 - width, 
              self.y1 - width]
 
-        plt.plot(x, y, color='#FF0000')
+        im = plt.plot(x, y, color='#FF0000')
+        return im
 # エージェント
 class Agent(MyObject):
     def __init__(self, x, y):# 初期設定
@@ -65,7 +67,7 @@ class Agent(MyObject):
         return (self.x1, self.y1)
     
     def area_collision(self, area):# エリアの衝突判定
-        # エリアの範囲に出たら，エリア内の戻す
+        # エリアの範囲に出たら，エリア内に戻す
         if self.x1 <= area.x1:
             self.x1 = area.x1
         if self.y1 <= area.y1:
@@ -92,11 +94,12 @@ class Agent(MyObject):
         return False
         
     def draw(self):# 描画
-        plt.plot(self.x1, 
+        im = plt.plot(self.x1, 
                  self.y1,
                  marker='.', 
                  markersize = 20, 
                  color='#1f77b4')
+        return im
     
     def up(self):# 上へ移動
         self.y1 += 1
@@ -127,11 +130,13 @@ class Goal(MyObject):
              self.y1 - width, 
              self.y1 - width]
 
-        plt.plot(x, y, color='#008000')
+        im = plt.plot(x, y, color='#008000')
+        return im
 # mainの関数
 def run(goal_xy, move, fig_draw_mode):
     fig_interval = 1 #画像表示間隔
-    # fig_draw_mode 
+    max_t = 50
+    # fig_draw_mode =1
     
     area = Area(0, 0, 30, 30)# Area 生成
     agent = Agent(2, 2)# agent 生成
@@ -147,10 +152,16 @@ def run(goal_xy, move, fig_draw_mode):
     object_list = [area, agent, goal] + bstacle_list# オブジェクトリスト
     #　描画
     if fig_draw_mode == 1:
+        # print(type(fig_draw_mode))
+        fig = plt.figure(figsize=(5, 5))
+        ims = []; tmp = plt.plot()
         for oject in object_list:
-                oject.draw()
+                tmp += oject.draw()
+        ims.append(tmp)
     # メインの計算
     for t in range(len(move)):
+        if t > max_t:
+            break
         x_before = agent.x1#移動前のx座標
         y_before = agent.y1#移動前のy座標
         # --移動--
@@ -167,18 +178,26 @@ def run(goal_xy, move, fig_draw_mode):
         for bstacle in bstacle_list:# 障害物
             agent.obstacle_collision(bstacle, x_before, y_before)
         # --ゴール判定--
-        if agent.goal_collision(goal): return agent.getAgent()# ゴール(計算の終了)
+        if agent.goal_collision(goal): break# ゴール(計算の終了)
         #　--描画--
         if fig_draw_mode == 1:
             if t % fig_interval == 0:
+                tmp = plt.plot()
                 for oject in object_list:
-                    oject.draw()
+                    tmp += oject.draw()
+                ims.append(tmp)
+
+    if fig_draw_mode == 1:
+        ani = animation.ArtistAnimation(fig, ims)
+        # plt.show()
+        ani.save("./output.gif", writer="pillow")
+    
     # 計算の終了
     return agent.getAgent()
 
 if __name__ == "__main__":
     move_list = []
-    for i in range(3):
+    for i in range(20):
          move_list.append('RIGHT')
          
     print(run([28, 28], move_list, 1))

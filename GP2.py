@@ -8,7 +8,7 @@ import math
 POP_SIZE        = 60   # population size
 MIN_DEPTH       = 2    # minimal initial random tree depth
 MAX_DEPTH       = 5    # maximal initial random tree depth
-GENERATIONS     = 30  # maximal number of generations to run evolution
+GENERATIONS     = 100  # maximal number of generations to run evolution
 TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
@@ -31,10 +31,10 @@ class GPTree:
             return str(self.data)
     
     def print_tree(self, prefix = ""): # textual printout
-        print("%s%s" % (prefix, self.node_label()))        
-        if self.left:  self.left.print_tree (prefix + "   ")
-        if self.right: self.right.print_tree(prefix + "   ")
-
+        # print("%s%s" % (prefix, self.node_label()))        
+        # if self.left:  self.left.print_tree (prefix + "   ")
+        # if self.right: self.right.print_tree(prefix + "   ")
+        pass
     def compute_tree(self):
         if (self.data in FUNCTIONS): 
             return self.data(self.left.compute_tree(), self.right.compute_tree())
@@ -140,7 +140,7 @@ def main():
     init_run = deepcopy(population[0])# population[0]を保存
     
     # go evolution!
-    for gen in range(GENERATIONS):        
+    for gen in range(GENERATIONS):
         nextgen_population=[]
         for i in range(POP_SIZE):
             parent1 = selection(population, fitnesses)
