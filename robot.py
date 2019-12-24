@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""    
-注意:
-   オブジェクトの描画はareaからしなければならない
-   plt.figure()で初期化されるため
-
-"""
 import matplotlib.pyplot as plt
 
 # オブジェクト
@@ -135,22 +129,21 @@ class Goal(MyObject):
 
         plt.plot(x, y, color='#008000')
 # mainの関数
-def run(move, fig_draw_mode):
-    fig_interval = 1
-    # fig_draw_mode = False
+def run(goal_xy, move, fig_draw_mode):
+    fig_interval = 1 #画像表示間隔
+    # fig_draw_mode 
     
     area = Area(0, 0, 30, 30)# Area 生成
     agent = Agent(2, 2)# agent 生成
-    goal = Goal(28, 28, 2, 2)
-    obstacle1 = Obstacle(15, 5, 2, 15)# 障害物1 生成
-    obstacle2 = Obstacle(5, 15, 5, 3)# 障害物2 生成
-    obstacle3 = Obstacle(20, 27, 5, 3)# 障害物3 生成
-    obstacle4 = Obstacle(24, 2, 5, 3)# 障害物3 生成
+    goal = Goal(goal_xy[0], goal_xy[1], 2, 2)
     
-    bstacle_list = [obstacle1, 
-                    obstacle2, 
-                    obstacle3,
-                    obstacle4]# 障害物リスト
+    # 障害物リスト　
+    bstacle_list = [Obstacle(15, 5, 2, 15), # 障害物１
+                    Obstacle(5, 15, 5, 3),  # 障害物2
+                    Obstacle(20, 27, 5, 3), # 障害物3
+                    Obstacle(24, 20, 5, 3),  # 障害物4
+                    ]
+    
     object_list = [area, agent, goal] + bstacle_list# オブジェクトリスト
     #　描画
     if fig_draw_mode == 1:
@@ -177,7 +170,7 @@ def run(move, fig_draw_mode):
         if agent.goal_collision(goal): return agent.getAgent()# ゴール(計算の終了)
         #　--描画--
         if fig_draw_mode == 1:
-            if t % fig_interval ==0:
+            if t % fig_interval == 0:
                 for oject in object_list:
                     oject.draw()
     # 計算の終了
@@ -187,5 +180,5 @@ if __name__ == "__main__":
     move_list = []
     for i in range(3):
          move_list.append('RIGHT')
-
-    print(run(move_list, 1))
+         
+    print(run([28, 28], move_list, 1))

@@ -1,13 +1,14 @@
 from random import random, randint, seed
-from statistics import mean
+# from statistics import mean
 from copy import deepcopy
 import robot
 import collections
+import math
 
 POP_SIZE        = 60   # population size
 MIN_DEPTH       = 2    # minimal initial random tree depth
 MAX_DEPTH       = 5    # maximal initial random tree depth
-GENERATIONS     = 100  # maximal number of generations to run evolution
+GENERATIONS     = 30  # maximal number of generations to run evolution
 TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
@@ -110,8 +111,9 @@ def init_population(): # ramped half-and-half
 
 def fitness(individual): # inverse mean absolute error over dataset normalized to [0,1]
     l = list(flatten(individual.compute_tree()))
-    xy = robot.run(l, 0)
-    return 1/((xy[0] - 30)**2 + (xy[1] - 30)**2 + 1)
+    global goal_xy
+    xy = robot.run(goal_xy, l, 0)
+    return 1/(math.sqrt((xy[0] - goal_xy[0])**2 + (xy[1] - goal_xy[1])**2) + 1)
 
 def selection(population, fitnesses): # select one individual using tournament selection
     tournament = [randint(0, len(population)-1) for i in range(TOURNAMENT_SIZE)] # select tournament contenders
@@ -134,7 +136,9 @@ def main():
     best_of_run_f = 0
     best_of_run_gen = 0
     fitnesses = [fitness(population[i]) for i in range(POP_SIZE)]
-
+    
+    init_run = deepcopy(population[0])# population[0]を保存
+    
     # go evolution!
     for gen in range(GENERATIONS):        
         nextgen_population=[]
@@ -158,13 +162,19 @@ def main():
     print("\n\n_________________________________________________\nEND OF RUN\nbest_of_run attained at gen " + str(best_of_run_gen) +\
           " and has f=" + str(round(best_of_run_f,3)))
     best_of_run.print_tree()
-    print(best_of_run.compute_tree())
+    #print(best_of_run.compute_tree())
     best_tree = best_of_run.compute_tree()
     best_list = list(flatten(best_tree))
-    #print(best_of_run.list)
-    print()
-    print(best_list)
-    # robot.run(best_list, 1)
-    robot.run(best_list, 1)
     
+    init_list = list(flatten(init_run.compute_tree()))
+    #print(best_of_run.list)
+    #print()
+    #print(best_list)
+    global goal_xy
+    # robot.run(goal_xy, init_list, 1)# 最適化前の結果を再現
+    robot.run(goal_xy, best_list, 1)# 最良の結果を再現    
+
+
+
+goal_xy = [28, 28]# ゴール位置
 main()
