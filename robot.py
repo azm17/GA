@@ -135,7 +135,7 @@ class Goal(MyObject):
 # mainの関数
 def run(goal_xy, move, fig_draw_mode):
     fig_interval = 1 #画像表示間隔
-    max_t = 50
+    max_t = 60
     # fig_draw_mode =1
     
     area = Area(0, 0, 30, 30)# Area 生成
@@ -143,10 +143,11 @@ def run(goal_xy, move, fig_draw_mode):
     goal = Goal(goal_xy[0], goal_xy[1], 2, 2)
     
     # 障害物リスト　
-    bstacle_list = [Obstacle(15, 5, 2, 15), # 障害物１
-                    Obstacle(5, 15, 5, 3),  # 障害物2
+    bstacle_list = [#Obstacle(14, 8, 2, 20), # 障害物１
+                    Obstacle(2, 5, 5, 3),  # 障害物2
                     Obstacle(20, 27, 5, 3), # 障害物3
                     Obstacle(24, 20, 5, 3),  # 障害物4
+                    #Obstacle(24, 20, 5, 3),  # 障害物5
                     ]
     
     object_list = [area, agent, goal] + bstacle_list# オブジェクトリスト
@@ -190,7 +191,7 @@ def run(goal_xy, move, fig_draw_mode):
     if fig_draw_mode == 1:
         ani = animation.ArtistAnimation(fig, ims)
         # plt.show()
-        ani.save("./output.gif", writer="pillow")
+        ani.save("output.mp4", writer="pillow")
     
     # 計算の終了
     return agent.getAgent()
