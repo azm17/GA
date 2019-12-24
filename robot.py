@@ -135,20 +135,25 @@ class Goal(MyObject):
 
         plt.plot(x, y, color='#008000')
 # mainの関数
-def run(move):
+def run(move, fig_draw_mode):
     fig_interval = 1
-    fig_draw = False
+    # fig_draw_mode = False
     
     area = Area(0, 0, 30, 30)# Area 生成
-    agent = Agent(2, 28)# agent 生成
+    agent = Agent(2, 2)# agent 生成
     goal = Goal(28, 28, 2, 2)
-    obstacle1 = Obstacle(15, 5, 2, 5)# 障害物1 生成
+    obstacle1 = Obstacle(15, 5, 2, 15)# 障害物1 生成
     obstacle2 = Obstacle(5, 15, 5, 3)# 障害物2 生成
+    obstacle3 = Obstacle(20, 27, 5, 3)# 障害物3 生成
+    obstacle4 = Obstacle(24, 2, 5, 3)# 障害物3 生成
     
-    bstacle_list = [obstacle1, obstacle2]# 障害物リスト
+    bstacle_list = [obstacle1, 
+                    obstacle2, 
+                    obstacle3,
+                    obstacle4]# 障害物リスト
     object_list = [area, agent, goal] + bstacle_list# オブジェクトリスト
     #　描画
-    if fig_draw:
+    if fig_draw_mode == 1:
         for oject in object_list:
                 oject.draw()
     # メインの計算
@@ -171,7 +176,7 @@ def run(move):
         # --ゴール判定--
         if agent.goal_collision(goal): return agent.getAgent()# ゴール(計算の終了)
         #　--描画--
-        if fig_draw:
+        if fig_draw_mode == 1:
             if t % fig_interval ==0:
                 for oject in object_list:
                     oject.draw()
@@ -180,7 +185,7 @@ def run(move):
 
 if __name__ == "__main__":
     move_list = []
-    for i in range(30):
+    for i in range(3):
          move_list.append('RIGHT')
 
-    print(run(move_list))
+    print(run(move_list, 1))

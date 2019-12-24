@@ -2,11 +2,12 @@ from random import random, randint, seed
 from statistics import mean
 from copy import deepcopy
 import robot
+import collections
 
 POP_SIZE        = 60   # population size
 MIN_DEPTH       = 2    # minimal initial random tree depth
 MAX_DEPTH       = 5    # maximal initial random tree depth
-GENERATIONS     = 250  # maximal number of generations to run evolution
+GENERATIONS     = 100  # maximal number of generations to run evolution
 TOURNAMENT_SIZE = 5    # size of tournament for tournament selection
 XO_RATE         = 0.8  # crossover rate 
 PROB_MUTATION   = 0.2  # per-node mutation probability 
@@ -14,7 +15,7 @@ PROB_MUTATION   = 0.2  # per-node mutation probability
 def move(x, y): return [x, y]
 
 FUNCTIONS = [move]
-TERMINALS = ['UP', 'DOWN','RIGHT','LEFT'] 
+TERMINALS = ['UP', 'DOWN','RIGHT','LEFT']
 
 class GPTree:
     def __init__(self, data = None, left = None, right = None):
@@ -36,7 +37,7 @@ class GPTree:
     def compute_tree(self):
         if (self.data in FUNCTIONS): 
             return self.data(self.left.compute_tree(), self.right.compute_tree())
-        else: 
+        else:
             return self.data
             
     def random_tree(self, grow, max_depth, depth = 0): # create random tree using either grow or full method
@@ -108,17 +109,22 @@ def init_population(): # ramped half-and-half
     return pop
 
 def fitness(individual): # inverse mean absolute error over dataset normalized to [0,1]
-    #individual.compute_tree()
-    xy = robot.run(['DOWN'])
-    # print(individual.compute_tree())
-    
+    l = list(flatten(individual.compute_tree()))
+    xy = robot.run(l, 0)
     return 1/((xy[0] - 30)**2 + (xy[1] - 30)**2 + 1)
-                
+
 def selection(population, fitnesses): # select one individual using tournament selection
     tournament = [randint(0, len(population)-1) for i in range(TOURNAMENT_SIZE)] # select tournament contenders
     tournament_fitnesses = [fitnesses[tournament[i]] for i in range(TOURNAMENT_SIZE)]
     return deepcopy(population[tournament[tournament_fitnesses.index(max(tournament_fitnesses))]]) 
-            
+
+def flatten(l):
+    for el in l:
+        if isinstance(el, collections.abc.Iterable) and not isinstance(el, (str, bytes)):
+            yield from flatten(el)
+        else:
+            yield el
+
 def main():      
     # init stuff
     seed() # init internal state of random number generator
@@ -153,6 +159,12 @@ def main():
           " and has f=" + str(round(best_of_run_f,3)))
     best_of_run.print_tree()
     print(best_of_run.compute_tree())
+    best_tree = best_of_run.compute_tree()
+    best_list = list(flatten(best_tree))
     #print(best_of_run.list)
+    print()
+    print(best_list)
+    # robot.run(best_list, 1)
+    robot.run(best_list, 1)
     
 main()
