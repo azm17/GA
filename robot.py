@@ -4,15 +4,15 @@ import matplotlib.animation as animation
 
 # オブジェクト
 class MyObject():
-    def __init__(self, x, y):
+    def __init__(self, x, y, width, height):
         self.x1 = x
         self.y1 = y
+        self.x2 = x + width
+        self.y2 = y + height
 # エリア
 class Area(MyObject):
     def __init__(self, x, y, width, height):# エリア設定
-        super(Area, self).__init__(x, y)
-        self.x2 = x + width
-        self.y2 = y + height
+        super(Area, self).__init__(x, y, width, height)
         
     def draw(self):# 描画
         width = 0.9
@@ -38,9 +38,7 @@ class Area(MyObject):
 # 障害物
 class Obstacle(MyObject):
     def __init__(self, x, y, width, height):# エリア設定
-        super(Obstacle, self).__init__(x, y)
-        self.x2 = x + width
-        self.y2 = y + height
+        super(Obstacle, self).__init__(x, y, width, height)
     
     def draw(self):# 描画
         width = 0.9
@@ -61,7 +59,7 @@ class Obstacle(MyObject):
 # エージェント
 class Agent(MyObject):
     def __init__(self, x, y):# 初期設定
-        super(Agent, self).__init__(x, y)
+        super(Agent, self).__init__(x, y, 0, 0)
     
     def getAgent(self):# 座標を取得
         return (self.x1, self.y1)
@@ -112,9 +110,7 @@ class Agent(MyObject):
 
 class Goal(MyObject):
     def __init__(self, x, y, width, height):# エリア設定
-        super(Goal, self).__init__(x, y)
-        self.x2 = x + width
-        self.y2 = y + height
+        super(Goal, self).__init__(x, y, width, height)
     
     def draw(self):# 描画
         width = 0.9
@@ -190,7 +186,6 @@ def run(goal_xy, move, fig_draw_mode):
 
     if fig_draw_mode == 1:
         ani = animation.ArtistAnimation(fig, ims)
-        # plt.show()
         ani.save("output.mp4", writer="pillow")
     
     # 計算の終了
