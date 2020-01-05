@@ -139,11 +139,11 @@ def run(goal_xy, move, fig_draw_mode):
     goal = Goal(goal_xy[0], goal_xy[1], 2, 2)
     
     # 障害物リスト　
-    bstacle_list = [#Obstacle(14, 8, 2, 20), # 障害物１
+    bstacle_list = [Obstacle(14, 8, 2, 20), # 障害物１
                     Obstacle(2, 5, 5, 3),  # 障害物2
                     Obstacle(20, 27, 5, 3), # 障害物3
                     Obstacle(24, 20, 5, 3),  # 障害物4
-                    #Obstacle(24, 20, 5, 3),  # 障害物5
+                    Obstacle(24, 20, 5, 3),  # 障害物5
                     ]
     
     object_list = [area, agent, goal] + bstacle_list# オブジェクトリスト
